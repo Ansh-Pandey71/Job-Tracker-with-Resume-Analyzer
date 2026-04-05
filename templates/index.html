@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JobLens — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:#0d0f14; --sidebar:#101218; --surface:#13161d; --card:#1a1d26; --card-hover:#1e2130;
+      --border:#252836; --accent:#5c6ef8; --accent-2:#7b5cf8; --accent-soft:rgba(92,110,248,0.12);
+      --text:#e8eaf2; --muted:#7a7f99; --input-bg:#0f1117;
+      --danger:#f87171; --success:#4ade80; --warning:#fbbf24; --info:#38bdf8;
+      --radius:12px; --sidebar-w:230px; --header-h:64px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+
+    .sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;transition:transform .3s ease}
+    .sidebar-logo{display:flex;align-items:center;gap:.55rem;padding:1.25rem 1.4rem;border-bottom:1px solid var(--border);text-decoration:none}
+    .logo-icon{width:34px;height:34px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center}
+    .logo-icon svg{width:18px;height:18px;fill:#fff}
+    .logo-text{font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);letter-spacing:-.02em}
+    .logo-text span{color:var(--accent)}
+    .sidebar-nav{flex:1;padding:.75rem .85rem;overflow-y:auto}
+    .nav-label{font-size:.65rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:.5rem .5rem .3rem;margin-top:.5rem}
+    .nav-item{display:flex;align-items:center;gap:.65rem;padding:.6rem .7rem;border-radius:10px;cursor:pointer;font-size:.875rem;font-weight:500;color:var(--muted);transition:background .15s,color .15s;margin-bottom:.15rem;user-select:none;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif}
+    .nav-item svg{width:17px;height:17px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .nav-item:hover{background:var(--accent-soft);color:var(--text)}
+    .nav-item.active{background:var(--accent-soft);color:var(--accent)}
+    .sidebar-footer{padding:1rem 1.15rem;border-top:1px solid var(--border)}
+    .footer-inner{display:flex;align-items:center;gap:.6rem}
+    .avatar{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff}
+    .user-name{font-size:.78rem;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .user-role{font-size:.65rem;color:var(--muted)}
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:199}
+    .overlay.show{display:block}
+    .main-wrap{margin-left:var(--sidebar-w);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+    .topbar{height:var(--header-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1.75rem;flex-shrink:0}
+    .topbar-left{display:flex;align-items:center;gap:.85rem}
+    .hamburger{display:none;width:36px;height:36px;background:var(--card);border:1px solid var(--border);border-radius:9px;cursor:pointer;align-items:center;justify-content:center}
+    .hamburger svg{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round}
+    .topbar-title{font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:700;letter-spacing:-.02em}
+    .topbar-sub{font-size:.73rem;color:var(--muted);margin-top:1px}
+    .icon-btn{width:36px;height:36px;background:var(--card);border:1px solid var(--border);border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+    .icon-btn:hover{background:var(--card-hover)}
+    .icon-btn svg{width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .content{flex:1;overflow-y:auto;padding:1.75rem;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+    .section{display:none}.section.active{display:block}
+    .page-title{font-family:'Sora',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:-.02em}
+    .page-desc{font-size:.8rem;color:var(--muted);margin-top:3px}
+    .page-head{margin-bottom:1.5rem}
+    .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;margin-bottom:1.5rem}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.35rem 1.4rem;position:relative;overflow:hidden;transition:transform .2s,border-color .2s}
+    .stat-card:hover{transform:translateY(-2px);border-color:rgba(92,110,248,.3)}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+    .stat-card.blue::before{background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+    .stat-card.green::before{background:linear-gradient(90deg,#22d3ee,#4ade80)}
+    .stat-card.gold::before{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+    .stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:.9rem}
+    .stat-icon svg{width:20px;height:20px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .stat-icon.blue{background:rgba(92,110,248,.15)}.stat-icon.blue svg{stroke:var(--accent)}
+    .stat-icon.green{background:rgba(74,222,128,.12)}.stat-icon.green svg{stroke:var(--success)}
+    .stat-icon.gold{background:rgba(251,191,36,.12)}.stat-icon.gold svg{stroke:var(--warning)}
+    .stat-val{font-family:'Sora',sans-serif;font-size:2rem;font-weight:700;line-height:1;margin-bottom:.2rem}
+    .stat-lbl{font-size:.78rem;color:var(--muted);font-weight:500}
+    .panel{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+    .panel-head{padding:1rem 1.35rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .panel-title{font-size:.875rem;font-weight:600}
+    .panel-meta{font-size:.73rem;color:var(--muted)}
+    .empty{text-align:center;padding:2.5rem;color:var(--muted)}
+    .empty svg{width:38px;height:38px;stroke:var(--muted);fill:none;stroke-width:1.4;opacity:.35;display:block;margin:0 auto .65rem}
+    .empty p{font-size:.83rem}
+    .jobs-layout{display:grid;grid-template-columns:300px 1fr;gap:.85rem;align-items:start}
+    .form-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.35rem}
+    .form-card-title{font-size:.875rem;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:.4rem}
+    .form-card-title svg{width:15px;height:15px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round}
+    label{display:block;font-size:.72rem;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+    .field{margin-bottom:.9rem}
+    input[type="text"],input[type="date"],select,textarea{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius);padding:.62rem .85rem;font-size:.875rem;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none}
+    input::placeholder{color:#3e4258}
+    input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(92,110,248,.1)}
+    select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7f99' stroke-width='2' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .85rem center;padding-right:2.2rem;cursor:pointer}
+    select option{background:var(--card)}
+    textarea{resize:vertical;min-height:130px;line-height:1.6}
+    .btn-primary{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent-2));border:none;border-radius:var(--radius);color:#fff;font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:600;padding:.68rem 1rem;display:flex;align-items:center;justify-content:center;gap:.4rem;cursor:pointer;transition:opacity .2s,transform .15s;letter-spacing:.01em}
+    .btn-primary:hover{opacity:.85;transform:translateY(-1px)}
+    .btn-primary:active{transform:translateY(0)}
+    .btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .btn-primary svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round}
+    .tbl-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:.875rem}
+    thead tr{border-bottom:1px solid var(--border)}
+    thead th{padding:.7rem 1rem;text-align:left;font-size:.68rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+    tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+    tbody tr:last-child{border-bottom:none}
+    tbody tr:hover{background:rgba(255,255,255,.02)}
+    tbody td{padding:.8rem 1rem;vertical-align:middle}
+    .badge{display:inline-flex;align-items:center;gap:.3rem;padding:.18rem .6rem;border-radius:99px;font-size:.7rem;font-weight:600;letter-spacing:.02em;white-space:nowrap}
+    .badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+    .badge-applied{background:rgba(92,110,248,.15);color:#818cf8}
+    .badge-interview{background:rgba(251,191,36,.15);color:#fbbf24}
+    .badge-selected{background:rgba(74,222,128,.15);color:#4ade80}
+    .btn-del{display:inline-flex;align-items:center;gap:.3rem;padding:.28rem .65rem;border-radius:8px;font-size:.75rem;font-weight:600;font-family:'DM Sans',sans-serif;background:rgba(248,113,113,.1);color:var(--danger);border:1px solid rgba(248,113,113,.18);cursor:pointer;transition:background .15s}
+    .btn-del:hover{background:rgba(248,113,113,.2)}
+    .btn-del svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+    .analyzer-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:.85rem}
+    .btn-analyze{display:flex;align-items:center;justify-content:center;gap:.5rem;margin:0 auto .85rem;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border:none;border-radius:99px;padding:.72rem 2.4rem;font-size:.9rem;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;transition:opacity .2s,transform .15s}
+    .btn-analyze:hover{opacity:.88;transform:translateY(-1px)}
+    .btn-analyze svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+    .result-area{display:none}
+    .result-area.show{display:grid;grid-template-columns:auto 1fr 1.2fr;gap:.85rem}
+    .score-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.35rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem}
+    .score-ring{position:relative;width:96px;height:96px}
+    .score-ring svg{transform:rotate(-90deg)}
+    .score-ring circle{fill:none;stroke-width:7;stroke-linecap:round}
+    .ring-bg{stroke:var(--border)}
+    .ring-fill{stroke:url(#scoreGrad);stroke-dasharray:220;stroke-dashoffset:220;transition:stroke-dashoffset .8s ease}
+    .score-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:1.25rem;font-weight:700}
+    .score-lbl{font-size:.75rem;color:var(--muted);font-weight:500}
+    .result-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.15rem 1.3rem}
+    .result-box-title{font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:.7rem;display:flex;align-items:center;gap:.4rem}
+    .result-box-title svg{width:13px;height:13px;fill:none;stroke-width:2;stroke-linecap:round}
+    .tags{display:flex;flex-wrap:wrap;gap:.35rem}
+    .tag{padding:.2rem .6rem;border-radius:99px;font-size:.72rem;font-weight:500;background:rgba(248,113,113,.1);color:var(--danger);border:1px solid rgba(248,113,113,.18)}
+    .sugg-list{list-style:none}
+    .sugg-list li{display:flex;align-items:flex-start;gap:.45rem;font-size:.8rem;color:var(--muted);padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.04)}
+    .sugg-list li:last-child{border-bottom:none}
+    .sugg-list li::before{content:'→';color:var(--info);flex-shrink:0}
+    .profile-wrap{max-width:500px}
+    .profile-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;text-align:center;margin-bottom:.85rem}
+    .profile-ava{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:1.6rem;font-weight:700;color:#fff;border:3px solid var(--border);margin:0 auto .75rem}
+    .profile-name{font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:700}
+    .profile-email{font-size:.83rem;color:var(--muted);margin-top:2px;margin-bottom:1rem}
+    .profile-stats{display:flex;justify-content:center;gap:2rem;padding-top:.9rem;border-top:1px solid var(--border)}
+    .ps-val{font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:700}
+    .ps-lbl{font-size:.68rem;color:var(--muted)}
+    .meta-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.35rem;margin-bottom:.85rem}
+    .meta-row{display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid var(--border);font-size:.875rem}
+    .meta-row:first-child{padding-top:0}
+    .meta-row:last-child{border-bottom:none;padding-bottom:0}
+    .meta-key{color:var(--muted);font-size:.78rem}
+    .meta-val{color:var(--text);font-weight:500}
+    .btn-logout{width:100%;background:rgba(248,113,113,.08);color:var(--danger);border:1px solid rgba(248,113,113,.2);padding:.72rem;border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:600;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:.5rem}
+    .btn-logout:hover{background:rgba(248,113,113,.16)}
+    .btn-logout svg{width:16px;height:16px;stroke:var(--danger);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    /* Loading spinner */
+    .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin-right:4px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:900px){.jobs-layout{grid-template-columns:1fr}.result-area.show{grid-template-columns:auto 1fr}.result-area.show .result-box:last-child{grid-column:1/-1}}
+    @media(max-width:700px){.stats-grid{grid-template-columns:1fr}.analyzer-grid{grid-template-columns:1fr}.result-area.show{grid-template-columns:1fr}.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main-wrap{margin-left:0}.hamburger{display:flex}.content{padding:1rem}.topbar{padding:0 1rem}}
+  </style>
+</head>
+<body>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-logo" href="#">
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10-2h4v2h-4V4zm10 15H4V8h16v11z"/></svg></div>
+      <span class="logo-text">Job<span>Lens</span></span>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Main</div>
+      <button class="nav-item active" onclick="showSection('dashboard',this)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" onclick="showSection('jobs',this)">
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+        My Jobs
+      </button>
+      <button class="nav-item" onclick="showSection('analyzer',this)">
+        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Resume Analyzer
+      </button>
+      <div class="nav-label" style="margin-top:.75rem">Account</div>
+      <button class="nav-item" onclick="showSection('profile',this)">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Profile
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="footer-inner">
+        <div class="avatar" id="sb-avatar">U</div>
+        <div style="flex:1;min-width:0">
+          <div class="user-name" id="sb-email">Loading…</div>
+          <div class="user-role">Job Seeker</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-wrap">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSidebar()">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div>
+          <div class="topbar-title" id="hd-title">Dashboard</div>
+          <div class="topbar-sub"   id="hd-sub">Welcome back 👋</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:.5rem">
+        <div class="icon-btn"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- DASHBOARD -->
+      <div class="section active" id="section-dashboard">
+        <div class="page-head"><div class="page-title">Overview</div><div class="page-desc">Your job search at a glance</div></div>
+        <div class="stats-grid">
+          <div class="stat-card blue"><div class="stat-icon blue"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="stat-val" id="stat-applied">0</div><div class="stat-lbl">Applied Jobs</div></div>
+          <div class="stat-card green"><div class="stat-icon green"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="stat-val" id="stat-interview">0</div><div class="stat-lbl">Interviews</div></div>
+          <div class="stat-card gold"><div class="stat-icon gold"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-val" id="stat-selected">0</div><div class="stat-lbl">Selected</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Recent Applications</span></div>
+          <div id="recent-jobs"><div class="empty"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg><p>No applications yet. Go to <strong>My Jobs</strong> to add one.</p></div></div>
+        </div>
+      </div>
+
+      <!-- MY JOBS -->
+      <div class="section" id="section-jobs">
+        <div class="page-head"><div class="page-title">My Jobs</div><div class="page-desc">Track every application in one place</div></div>
+        <div class="jobs-layout">
+          <div class="form-card">
+            <div class="form-card-title"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add New Application</div>
+            <div class="field"><label for="j-company">Company</label><input type="text" id="j-company" placeholder="e.g. Google"/></div>
+            <div class="field"><label for="j-role">Role</label><input type="text" id="j-role" placeholder="e.g. Software Engineer"/></div>
+            <div class="field"><label for="j-status">Status</label><select id="j-status"><option value="Applied">Applied</option><option value="Interview">Interview</option><option value="Selected">Selected</option></select></div>
+            <div class="field"><label for="j-date">Date Applied</label><input type="date" id="j-date"/></div>
+            <button class="btn-primary" id="add-btn" onclick="addJob()">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Job
+            </button>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">All Applications</span><span class="panel-meta" id="job-count">0 entries</span></div>
+            <div class="tbl-wrap">
+              <table>
+                <thead><tr><th>Company</th><th>Role</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+                <tbody id="job-tbody"><tr id="empty-row"><td colspan="5"><div class="empty" style="padding:1.5rem"><p>No jobs added yet.</p></div></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYZER -->
+      <div class="section" id="section-analyzer">
+        <div class="page-head"><div class="page-title">Resume Analyzer</div><div class="page-desc">Match your resume against any job description instantly</div></div>
+        <div class="analyzer-grid">
+          <div class="form-card"><div class="form-card-title"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Your Resume</div><textarea id="resume-text" placeholder="Paste your resume content here…"></textarea></div>
+          <div class="form-card"><div class="form-card-title"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Job Description</div><textarea id="jd-text" placeholder="Paste the job description here…"></textarea></div>
+        </div>
+        <button class="btn-analyze" onclick="analyzeResume()">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Analyze Resume
+        </button>
+        <svg style="height:0;position:absolute"><defs><linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#5c6ef8"/><stop offset="100%" stop-color="#7b5cf8"/></linearGradient></defs></svg>
+        <div class="result-area" id="result-area">
+          <div class="score-card"><div class="score-ring"><svg width="96" height="96" viewBox="0 0 96 96"><circle class="ring-bg" cx="48" cy="48" r="35"/><circle class="ring-fill" id="ring-fill" cx="48" cy="48" r="35"/></svg><div class="score-num" id="score-num">0%</div></div><div class="score-lbl">Match Score</div></div>
+          <div class="result-box"><div class="result-box-title"><svg viewBox="0 0 24 24" style="stroke:var(--danger)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Missing Keywords</div><div class="tags" id="missing-tags"><span style="font-size:.8rem;color:var(--muted)">Run analysis first</span></div></div>
+          <div class="result-box"><div class="result-box-title"><svg viewBox="0 0 24 24" style="stroke:var(--info)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Suggestions</div><ul class="sugg-list" id="sugg-list"><li>Run the analysis to get suggestions</li></ul></div>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="section" id="section-profile">
+        <div class="page-head"><div class="page-title">Profile</div><div class="page-desc">Your account information</div></div>
+        <div class="profile-wrap">
+          <div class="profile-card">
+            <div class="profile-ava" id="pf-ava">U</div>
+            <div class="profile-name"  id="pf-name">User</div>
+            <div class="profile-email" id="pf-email">user@example.com</div>
+            <div class="profile-stats">
+              <div><div class="ps-val" id="ps-applied">0</div><div class="ps-lbl">Applied</div></div>
+              <div><div class="ps-val" id="ps-interview">0</div><div class="ps-lbl">Interviews</div></div>
+              <div><div class="ps-val" id="ps-selected">0</div><div class="ps-lbl">Selected</div></div>
+            </div>
+          </div>
+          <div class="meta-card">
+            <div class="meta-row"><span class="meta-key">Email</span><span class="meta-val" id="meta-email">—</span></div>
+            <div class="meta-row"><span class="meta-key">Member since</span><span class="meta-val" id="meta-since">—</span></div>
+            <div class="meta-row"><span class="meta-key">Plan</span><span class="meta-val" style="color:var(--accent)">Free</span></div>
+          </div>
+          <button class="btn-logout" onclick="logout()">
+            <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── AUTH CHECK ───────────────────────────────────────────────────────
+    const token = localStorage.getItem('jl_token');
+    if (!token) window.location.href = '/login';
+
+    const API_HEADERS = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    };
+
+    let jobs = [];
+
+    // ── INIT ─────────────────────────────────────────────────────────────
+    (async function init() {
+      document.getElementById('j-date').value = today();
+      try {
+        const res  = await fetch('/api/me', { headers: API_HEADERS });
+        if (res.status === 401) { logout(); return; }
+        const user = await res.json();
+        const email = user.email;
+        const ini   = email.charAt(0).toUpperCase();
+
+        setTxt('sb-avatar', ini);  setTxt('sb-email',  email);
+        setTxt('pf-ava',    ini);  setTxt('pf-name',   email.split('@')[0]);
+        setTxt('pf-email',  email);setTxt('meta-email', email);
+
+        const since = new Date(user.created_at);
+        setTxt('meta-since', since.toLocaleDateString('en-US', { month:'long', year:'numeric' }));
+
+        // Load jobs from DB
+        await loadJobs();
+      } catch(e) {
+        console.error('Init error:', e);
+      }
+    })();
+
+    async function loadJobs() {
+      const res  = await fetch('/api/jobs', { headers: API_HEADERS });
+      jobs = await res.json();
+      renderJobs();
+      updateStats();
+    }
+
+    // ── SECTION NAV ───────────────────────────────────────────────────────
+    const META = {
+      dashboard: ['Dashboard',       'Welcome back 👋'],
+      jobs:      ['My Jobs',         'Track all your applications'],
+      analyzer:  ['Resume Analyzer', 'Match your resume to any role'],
+      profile:   ['Profile',         'Manage your account'],
+    };
+    function showSection(id, el) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('section-' + id).classList.add('active');
+      if (el) el.classList.add('active');
+      setTxt('hd-title', META[id][0]);
+      setTxt('hd-sub',   META[id][1]);
+      if (id === 'profile') updateProfileStats();
+      if (window.innerWidth < 700) closeSidebar();
+    }
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('overlay').classList.toggle('show');
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+    }
+
+    // ── ADD JOB ───────────────────────────────────────────────────────────
+    async function addJob() {
+      const company = document.getElementById('j-company').value.trim();
+      const role    = document.getElementById('j-role').value.trim();
+      const status  = document.getElementById('j-status').value;
+      const date    = document.getElementById('j-date').value;
+      if (!company || !role) { alert('Please fill in Company and Role.'); return; }
+
+      const btn = document.getElementById('add-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Adding…';
+
+      try {
+        const res  = await fetch('/api/jobs', {
+          method: 'POST',
+          headers: API_HEADERS,
+          body: JSON.stringify({ company, role, status, date: date || today() })
+        });
+        const job = await res.json();
+        if (!res.ok) throw new Error(job.error);
+
+        jobs.unshift(job);
+        renderJobs();
+        updateStats();
+        document.getElementById('j-company').value = '';
+        document.getElementById('j-role').value    = '';
+      } catch(e) {
+        alert('Error: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Job';
+      }
+    }
+
+    // ── DELETE JOB ────────────────────────────────────────────────────────
+    async function deleteJob(id) {
+      if (!confirm('Delete this application?')) return;
+      try {
+        await fetch('/api/jobs/' + id, { method: 'DELETE', headers: API_HEADERS });
+        jobs = jobs.filter(j => j.id !== id);
+        renderJobs();
+        updateStats();
+      } catch(e) {
+        alert('Error deleting job');
+      }
+    }
+
+    // ── RENDER ────────────────────────────────────────────────────────────
+    function badgeClass(s) {
+      return { Applied:'badge-applied', Interview:'badge-interview', Selected:'badge-selected' }[s] || 'badge-applied';
+    }
+
+    function renderJobs() {
+      const tbody = document.getElementById('job-tbody');
+      const erow  = document.getElementById('empty-row');
+      setTxt('job-count', jobs.length + ' entr' + (jobs.length === 1 ? 'y' : 'ies'));
+      tbody.querySelectorAll('.job-row').forEach(r => r.remove());
+      if (!jobs.length) { erow.style.display = ''; renderRecent([]); return; }
+      erow.style.display = 'none';
+      jobs.forEach(j => {
+        const tr = document.createElement('tr');
+        tr.className = 'job-row';
+        tr.innerHTML = `
+          <td style="font-weight:500">${esc(j.company)}</td>
+          <td style="color:var(--muted)">${esc(j.role)}</td>
+          <td><span class="badge ${badgeClass(j.status)}">${j.status}</span></td>
+          <td style="color:var(--muted);font-size:.8rem">${fmtDate(j.date)}</td>
+          <td><button class="btn-del" onclick="deleteJob(${j.id})">
+            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>Delete</button></td>`;
+        tbody.appendChild(tr);
+      });
+      renderRecent(jobs.slice(0, 5));
+    }
+
+    function renderRecent(list) {
+      const el = document.getElementById('recent-jobs');
+      if (!list.length) {
+        el.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg><p>No applications yet. Go to <strong>My Jobs</strong> to add one.</p></div>`;
+        return;
+      }
+      let h = `<table><thead><tr><th>Company</th><th>Role</th><th>Status</th><th>Date</th></tr></thead><tbody>`;
+      list.forEach(j => {
+        h += `<tr><td style="padding:.7rem 1rem;font-weight:500">${esc(j.company)}</td><td style="padding:.7rem 1rem;color:var(--muted)">${esc(j.role)}</td><td style="padding:.7rem 1rem"><span class="badge ${badgeClass(j.status)}">${j.status}</span></td><td style="padding:.7rem 1rem;color:var(--muted);font-size:.8rem">${fmtDate(j.date)}</td></tr>`;
+      });
+      el.innerHTML = h + '</tbody></table>';
+    }
+
+    function updateStats() {
+      setTxt('stat-applied',   jobs.length);
+      setTxt('stat-interview', jobs.filter(j => j.status === 'Interview').length);
+      setTxt('stat-selected',  jobs.filter(j => j.status === 'Selected').length);
+    }
+
+    function updateProfileStats() {
+      setTxt('ps-applied',   jobs.length);
+      setTxt('ps-interview', jobs.filter(j => j.status === 'Interview').length);
+      setTxt('ps-selected',  jobs.filter(j => j.status === 'Selected').length);
+    }
+
+    // ── ANALYZER ──────────────────────────────────────────────────────────
+    const STOP = new Set(['a','an','the','and','or','but','in','on','at','to','for','of','with','by','from','is','are','was','were','be','been','have','has','had','do','does','did','will','would','could','should','may','might','shall','can','i','we','you','he','she','it','they','this','that','these','those','as','if','so','not','also','our','your','their','about','into','through','during','before','after','above','below','between','each','more','most','other','than','then','when','where','which','who','how','what','all','both','few','its','my','no','nor','only','own','same','such','too','very','just','any']);
+    function tokenize(t) { return t.toLowerCase().replace(/[^a-z0-9\s+]/g,' ').split(/\s+/).filter(w => w.length > 2 && !STOP.has(w)); }
+
+    const SUGG = [
+      'Quantify your achievements with numbers and percentages.',
+      'Add measurable impact to each bullet point.',
+      'Use strong action verbs (led, built, optimized, shipped).',
+      "Mirror the job description's exact terminology.",
+      'Include a concise professional summary at the top.',
+      'List certifications or courses relevant to the role.',
+      'Tailor your skills section to match job requirements.',
+      'Keep formatting clean — avoid tables and graphics in ATS.',
+      'Highlight cross-functional collaboration and leadership.',
+      'Add links to your GitHub, portfolio, or LinkedIn.',
+    ];
+
+    function analyzeResume() {
+      const rt = document.getElementById('resume-text').value.trim();
+      const jt = document.getElementById('jd-text').value.trim();
+      if (!rt || !jt) { alert('Please paste both resume and job description.'); return; }
+      const rSet   = new Set(tokenize(rt));
+      const jdUniq = [...new Set(tokenize(jt))];
+      const matched = jdUniq.filter(w => rSet.has(w));
+      const missing = jdUniq.filter(w => !rSet.has(w)).slice(0, 20);
+      const score   = jdUniq.length ? Math.round(matched.length / jdUniq.length * 100) : 0;
+
+      const circ = 2 * Math.PI * 35;
+      const ring = document.getElementById('ring-fill');
+      ring.style.strokeDasharray  = circ;
+      ring.style.strokeDashoffset = circ;
+      setTxt('score-num', score + '%');
+
+      const ra = document.getElementById('result-area');
+      ra.classList.add('show');
+      requestAnimationFrame(() => requestAnimationFrame(() => { ring.style.strokeDashoffset = circ - (score / 100) * circ; }));
+
+      document.getElementById('missing-tags').innerHTML = !missing.length
+        ? `<span style="font-size:.8rem;color:var(--success)">✓ Great match!</span>`
+        : missing.map(w => `<span class="tag">${w}</span>`).join('');
+
+      const n = score < 40 ? 5 : score < 70 ? 4 : 3;
+      const shuf = [...SUGG].sort(() => .5 - Math.random()).slice(0, n);
+      if (missing.length) shuf.unshift(`Add these keywords naturally: ${missing.slice(0, 5).join(', ')}.`);
+      document.getElementById('sugg-list').innerHTML = shuf.map(s => `<li>${s}</li>`).join('');
+      ra.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ── LOGOUT ────────────────────────────────────────────────────────────
+    async function logout() {
+      try { await fetch('/api/logout', { method: 'POST', headers: API_HEADERS }); } catch(e) {}
+      localStorage.removeItem('jl_token');
+      localStorage.removeItem('jl_email');
+      window.location.href = '/login';
+    }
+
+    // ── UTILS ─────────────────────────────────────────────────────────────
+    function setTxt(id, v) { const el = document.getElementById(id); if(el) el.textContent = v; }
+    function today()       { return new Date().toISOString().split('T')[0]; }
+    function esc(s)        { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function fmtDate(d)    { if(!d) return '—'; const [y,m,day] = d.split('-'); return `${day}/${m}/${y}`; }
+  </script>
+</body>
+</html>
