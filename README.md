@@ -55,3 +55,5 @@ Three tables:
 - `users` — email + hashed password
 - `sessions` — active tokens with expiry
 - `jobs` — job applications per user
+
+Live Link: https://job-tracker-with-resume-analyzer-2.onrender.com
