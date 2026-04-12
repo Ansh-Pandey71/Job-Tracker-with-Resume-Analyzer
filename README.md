@@ -2,10 +2,10 @@
 
 JobLens is a full-stack web application designed to help students and job seekers efficiently track their job applications and improve their resumes through structured analysis.
 
+
 🔍 Problem Statement
 
 The modern job search process is fragmented and inefficient:
-
 Applications are scattered across platforms
 No centralized tracking system
 Lack of feedback on resume quality
@@ -14,7 +14,6 @@ Missed opportunities due to poor organization
 💡 Solution
 
 JobLens provides a unified platform where users can:
-
 Track all job applications in one place
 Analyze resumes against job descriptions
 Identify missing skills and improve job readiness
@@ -91,15 +90,12 @@ Three tables:
 👉 https://job-tracker-with-resume-analyzer-2.onrender.com
 
 💻 GitHub Repository
-
 👉 https://github.com/Ansh-Pandey71/Job-Tracker-with-Resume-Analyzer
 
 📽 Explainer Video
-
 👉 https://drive.google.com/file/d/1B5khOluOrKCyDyOpJvhn3_XfJl206-71/view?usp=drivesdk
 
 📊 Project Presentation
-
 👉 https://drive.google.com/file/d/1moqFjnn-UTYOkNtOrikL23XgxaxJUv0A/view?usp=sharing 
 
 👉 https://docs.google.com/presentation/d/1GgdIITROyD544lk9LyttARFHuehygVQE/edit?usp=sharing&ouid=102310430955649078200&rtpof=true&sd=true
