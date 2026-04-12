@@ -45,16 +45,9 @@ JobLens provides a unified platform where users can:
 
 ## 📁 Project Structure
 
-**
-joblens/
-├── app.py
-├── joblens.db
-├── requirements.txt
-└── templates/
-├── login.html
-├── register.html
-└── index.html
-**
+
+<img width="197" height="180" alt="Screenshot 2026-04-12 095422" src="https://github.com/user-attachments/assets/9e85e9ee-5307-476c-ac05-898ba9af3e21" />
+
 
 ---
 
@@ -98,19 +91,19 @@ http://localhost:5000
 - sessions → manages login tokens
 - jobs → stores job applications
 
-## 🔗 Live Application
+🔗 Live Application
 
 👉 https://job-tracker-with-resume-analyzer-2.onrender.com
 
-## 💻 GitHub Repository
+💻 GitHub Repository
 
 👉 https://github.com/Ansh-Pandey71/Job-Tracker-with-Resume-Analyzer
 
-## 📽 Explainer Video
+📽 Explainer Video
 
 👉 https://drive.google.com/file/d/1B5khOluOrKCyDyOpJvhn3_XfJl206-71/view?usp=drivesdk
 
-## 📊 Project Presentation
+📊 Project Presentation
 
 👉 https://drive.google.com/file/d/1moqFjnn-UTYOkNtOrikL23XgxaxJUv0A/view?usp=sharing
 
