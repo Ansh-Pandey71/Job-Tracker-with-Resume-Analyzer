@@ -45,6 +45,7 @@ JobLens provides a unified platform where users can:
 
 ## 📁 Project Structure
 
+**
 joblens/
 ├── app.py
 ├── joblens.db
@@ -53,7 +54,7 @@ joblens/
 ├── login.html
 ├── register.html
 └── index.html
-
+**
 
 ---
 
@@ -86,15 +87,16 @@ http://localhost:5000
 
 ## 🔐 Authentication
 
-Token-based authentication (no JWT dependency)
-Token stored in localStorage
-Authorization header used for API requests
-Token expiry: 7 days
+- Token-based authentication (no JWT dependency)
+- Token stored in localStorage
+- Authorization header used for API requests
+- Token expiry: 7 days
 
 ## 🗄 Database Design
-users → stores user credentials
-sessions → manages login tokens
-jobs → stores job applications
+
+- users → stores user credentials
+- sessions → manages login tokens
+- jobs → stores job applications
 
 ## 🔗 Live Application
 
