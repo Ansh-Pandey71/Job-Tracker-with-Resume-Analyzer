@@ -1,31 +1,35 @@
-# 🔭 JobLens — Smart Job Tracker & Resume Analyzer
+🚀 JobLens — Smart Job Tracker & Resume Analyzer
 
 JobLens is a full-stack web application designed to help students and job seekers efficiently track their job applications and improve their resumes through structured analysis.
-
 
 🔍 Problem Statement
 
 The modern job search process is fragmented and inefficient:
 
--Applications are scattered across platforms
--No centralized tracking system
--Lack of feedback on resume quality
--Missed opportunities due to poor organization
+Applications are scattered across platforms
+No centralized tracking system
+Lack of feedback on resume quality
+Missed opportunities due to poor organization
 
 💡 Solution
 
 JobLens provides a unified platform where users can:
 
--Track all job applications in one place
--Analyze resumes against job descriptions
--Identify missing skills and improve job readiness
+Track all job applications in one place
+Analyze resumes against job descriptions
+Identify missing skills and improve job readiness
 
 ✨ Key Features
+📌 Job Application Tracker (Add, update, delete applications)
+📊 Dashboard with application overview
+🧠 Resume Analyzer (basic keyword matching & skill gap detection)
+🔐 Secure Authentication (token-based session system)
 
--📌 Job Application Tracker (Add, update, delete applications)
--📊 Dashboard with application overview
--🧠 Resume Analyzer (basic keyword matching & skill gap detection)
--🔐 Secure Authentication (token-based session system)
+🛠 Tech Stack
+Frontend: HTML, CSS, JavaScript
+Backend: Flask (Python)
+Database: SQLite
+Deployment: Render
 
 ## Project Structure
 
