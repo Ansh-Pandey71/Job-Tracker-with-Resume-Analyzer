@@ -70,43 +70,45 @@ python app.py
 http://localhost:5000
 ```
 
-🔗 API Endpoints
 
-Method	Endpoint	Description	Auth
-POST	/api/register	New user registration	No
-POST	/api/login	Login → returns token	No
-POST	/api/logout	Invalidate session	Yes
-GET	/api/me	User info + stats	Yes
-GET	/api/jobs	Get all jobs	Yes
-POST	/api/jobs	Add new job	Yes
-DELETE	/api/jobs/:id	Delete a job	Yes
-PUT	/api/jobs/:id	Update job status	Yes
+## 🔗 API Endpoints
 
-🔐 Authentication
+| Method | Endpoint       | Description            | Auth |
+|--------|---------------|------------------------|------|
+| POST   | /api/register | New user registration  | No   |
+| POST   | /api/login    | Login → returns token  | No   |
+| POST   | /api/logout   | Invalidate session     | Yes  |
+| GET    | /api/me       | User info + stats      | Yes  |
+| GET    | /api/jobs     | Get all jobs           | Yes  |
+| POST   | /api/jobs     | Add new job            | Yes  |
+| DELETE | /api/jobs/:id | Delete a job           | Yes  |
+| PUT    | /api/jobs/:id | Update job status      | Yes  |
+
+## 🔐 Authentication
 
 Token-based authentication (no JWT dependency)
 Token stored in localStorage
 Authorization header used for API requests
 Token expiry: 7 days
 
-🗄 Database Design
+## 🗄 Database Design
 users → stores user credentials
 sessions → manages login tokens
 jobs → stores job applications
 
-🔗 Live Application
+## 🔗 Live Application
 
 👉 https://job-tracker-with-resume-analyzer-2.onrender.com
 
-💻 GitHub Repository
+## 💻 GitHub Repository
 
 👉 https://github.com/Ansh-Pandey71/Job-Tracker-with-Resume-Analyzer
 
-📽 Explainer Video
+## 📽 Explainer Video
 
 👉 https://drive.google.com/file/d/1B5khOluOrKCyDyOpJvhn3_XfJl206-71/view?usp=drivesdk
 
-📊 Project Presentation
+## 📊 Project Presentation
 
 👉 https://drive.google.com/file/d/1moqFjnn-UTYOkNtOrikL23XgxaxJUv0A/view?usp=sharing
 
