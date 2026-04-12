@@ -1,57 +1,63 @@
-🚀 JobLens — Smart Job Tracker & Resume Analyzer
+# 🚀 JobLens — Smart Job Tracker & Resume Analyzer
 
 JobLens is a full-stack web application designed to help students and job seekers efficiently track their job applications and improve their resumes through structured analysis.
 
-🔍 Problem Statement
+---
+
+## 🔍 Problem Statement
 
 The modern job search process is fragmented and inefficient:
 
-Applications are scattered across platforms
-No centralized tracking system
-Lack of feedback on resume quality
-Missed opportunities due to poor organization
+- Applications are scattered across platforms  
+- No centralized tracking system  
+- Lack of feedback on resume quality  
+- Missed opportunities due to poor organization  
 
-💡 Solution
+---
+
+## 💡 Solution
 
 JobLens provides a unified platform where users can:
 
-Track all job applications in one place
-Analyze resumes against job descriptions
-Identify missing skills and improve job readiness
+- Track all job applications in one place  
+- Analyze resumes against job descriptions  
+- Identify missing skills and improve job readiness  
 
-✨ Key Features
-📌 Job Application Tracker (Add, update, delete applications)
-📊 Dashboard with application overview
-🧠 Resume Analyzer (basic keyword matching & skill gap detection)
-🔐 Secure Authentication (token-based session system)
+---
 
-🛠 Tech Stack
-Frontend: HTML, CSS, JavaScript
-Backend: Flask (Python)
-Database: SQLite
-Deployment: Render
+## ✨ Key Features
 
-## Project Structure
+- 📌 Job Application Tracker (Add, update, delete applications)  
+- 📊 Dashboard with application overview  
+- 🧠 Resume Analyzer (basic keyword matching & skill gap detection)  
+- 🔐 Secure Authentication (token-based session system)  
 
-```
+---
+
+## 🛠 Tech Stack
+
+- **Frontend:** HTML, CSS, JavaScript  
+- **Backend:** Flask (Python)  
+- **Database:** SQLite  
+- **Deployment:** Render  
+
+---
+
+## 📁 Project Structure
+
 joblens/
-├── app.py              ← Flask backend (main file)
-├── joblens.db          ← SQLite database (auto-created)
+├── app.py
+├── joblens.db
 ├── requirements.txt
 └── templates/
-    ├── login.html
-    ├── register.html
-    └── index.html      ← Dashboard
-```
+├── login.html
+├── register.html
+└── index.html
 
-🛠 Tech Stack
 
-Frontend: HTML, CSS, JavaScript
-Backend: Flask (Python)
-Database: SQLite
-Deployment: Render
+---
 
-## Setup & Run
+## ⚙️ Setup & Run
 
 ```bash
 # 1. Install dependencies
@@ -64,35 +70,29 @@ python app.py
 http://localhost:5000
 ```
 
-## API Endpoints
+🔗 API Endpoints
 
-| Method | Endpoint          | Description              | Auth |
-|--------|-------------------|--------------------------|------|
-| POST   | /api/register     | New user registration    | No   |
-| POST   | /api/login        | Login → returns token    | No   |
-| POST   | /api/logout       | Invalidate session       | Yes  |
-| GET    | /api/me           | User info + stats        | Yes  |
-| GET    | /api/jobs         | Get all jobs             | Yes  |
-| POST   | /api/jobs         | Add new job              | Yes  |
-| DELETE | /api/jobs/:id     | Delete a job             | Yes  |
-| PUT    | /api/jobs/:id     | Update job status        | Yes  |
+Method	Endpoint	Description	Auth
+POST	/api/register	New user registration	No
+POST	/api/login	Login → returns token	No
+POST	/api/logout	Invalidate session	Yes
+GET	/api/me	User info + stats	Yes
+GET	/api/jobs	Get all jobs	Yes
+POST	/api/jobs	Add new job	Yes
+DELETE	/api/jobs/:id	Delete a job	Yes
+PUT	/api/jobs/:id	Update job status	Yes
 
-## Authentication
+🔐 Authentication
 
-Token-based auth (no JWT dependency needed):
+Token-based authentication (no JWT dependency)
+Token stored in localStorage
+Authorization header used for API requests
+Token expiry: 7 days
 
-- Login/Register → server returns a random token
-- Token stored in `localStorage` on client
-- Every API request sends `Authorization: Bearer <token>` header
-- Tokens expire after 7 days
-
-## Database (SQLite)
-
-Three tables:
-- `users` — email + hashed password
-- `sessions` — active tokens with expiry
-- `jobs` — job applications per user
-  
+🗄 Database Design
+users → stores user credentials
+sessions → manages login tokens
+jobs → stores job applications
 
 🔗 Live Application
 
@@ -108,6 +108,6 @@ Three tables:
 
 📊 Project Presentation
 
-👉 https://drive.google.com/file/d/1moqFjnn-UTYOkNtOrikL23XgxaxJUv0A/view?usp=sharing 
+👉 https://drive.google.com/file/d/1moqFjnn-UTYOkNtOrikL23XgxaxJUv0A/view?usp=sharing
 
 👉 https://docs.google.com/presentation/d/1GgdIITROyD544lk9LyttARFHuehygVQE/edit?usp=sharing&ouid=102310430955649078200&rtpof=true&sd=true
