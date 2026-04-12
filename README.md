@@ -1,6 +1,29 @@
-# 🔭 JobLens — Full Stack Job Tracker
+# 🔭 JobLens — Smart Job Tracker & Resume Analyzer
 
-Flask + SQLite backend with a dark-themed HTML/CSS/JS frontend.
+JobLens is a full-stack web application designed to help students and job seekers efficiently track their job applications and improve their resumes through structured analysis.
+
+🔍 Problem Statement
+
+The modern job search process is fragmented and inefficient:
+
+Applications are scattered across platforms
+No centralized tracking system
+Lack of feedback on resume quality
+Missed opportunities due to poor organization
+
+💡 Solution
+
+JobLens provides a unified platform where users can:
+
+Track all job applications in one place
+Analyze resumes against job descriptions
+Identify missing skills and improve job readiness
+
+✨ Key Features
+📌 Job Application Tracker (Add, update, delete applications)
+📊 Dashboard with application overview
+🧠 Resume Analyzer (basic keyword matching & skill gap detection)
+🔐 Secure Authentication (token-based session system)
 
 ## Project Structure
 
@@ -14,6 +37,13 @@ joblens/
     ├── register.html
     └── index.html      ← Dashboard
 ```
+
+🛠 Tech Stack
+
+Frontend: HTML, CSS, JavaScript
+Backend: Flask (Python)
+Database: SQLite
+Deployment: Render
 
 ## Setup & Run
 
@@ -55,13 +85,14 @@ Three tables:
 - `users` — email + hashed password
 - `sessions` — active tokens with expiry
 - `jobs` — job applications per user
+  
 
 🔗 Live Application
 👉 https://job-tracker-with-resume-analyzer-2.onrender.com
 
 💻 GitHub Repository
 
-👉 
+👉 https://github.com/Ansh-Pandey71/Job-Tracker-with-Resume-Analyzer
 
 📽 Explainer Video
 
@@ -69,5 +100,6 @@ Three tables:
 
 📊 Project Presentation
 
-👉 https://drive.google.com/file/d/1moqFjnn-UTYOkNtOrikL23XgxaxJUv0A/view?usp=sharing
+👉 https://drive.google.com/file/d/1moqFjnn-UTYOkNtOrikL23XgxaxJUv0A/view?usp=sharing 
+
 👉 https://docs.google.com/presentation/d/1GgdIITROyD544lk9LyttARFHuehygVQE/edit?usp=sharing&ouid=102310430955649078200&rtpof=true&sd=true
