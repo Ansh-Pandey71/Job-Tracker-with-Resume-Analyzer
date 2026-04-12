@@ -56,4 +56,18 @@ Three tables:
 - `sessions` — active tokens with expiry
 - `jobs` — job applications per user
 
-Live Link: https://job-tracker-with-resume-analyzer-2.onrender.com
+🔗 Live Application
+👉 https://job-tracker-with-resume-analyzer-2.onrender.com
+
+💻 GitHub Repository
+
+👉 
+
+📽 Explainer Video
+
+👉 https://drive.google.com/file/d/1B5khOluOrKCyDyOpJvhn3_XfJl206-71/view?usp=drivesdk
+
+📊 Project Presentation
+
+👉 https://drive.google.com/file/d/1moqFjnn-UTYOkNtOrikL23XgxaxJUv0A/view?usp=sharing
+👉 https://docs.google.com/presentation/d/1GgdIITROyD544lk9LyttARFHuehygVQE/edit?usp=sharing&ouid=102310430955649078200&rtpof=true&sd=true
